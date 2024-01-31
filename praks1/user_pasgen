@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Parooli genereerimise skript kasutaj jaoks
+
+if [$# -ne 1 ]; then
+    echo "Kasutusjuhend: $0 kasutajad"
+else
+    kasutajad=$1
+    if [ -r $kasutajad ]; then
+       echo "failid on korras"
+       for rida in $(paste -d: $kasutajad $paroolid)
+       do
+	   kasutajanimi=$(echo "$rida")
+	   sh yl1 $kasutajanimi
+	   parool=$(pwgen -s 4 -1)
+	   echo "$kasutajanimi:$parool"	| chpasswd
+	   echo "$kasutajanimi - $parool" >> users
+       done
+     else
+       echo "problem"
+     fi
+fi
