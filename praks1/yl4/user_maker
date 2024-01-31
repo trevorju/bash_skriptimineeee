@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# Paroolid ja kasutajad nimed eraldi failides, kasutaja tegemine.
+
+
+
+if [ $# -ne 2 ]; then
+    echo "Kasutusjuhend: $0 uuser pasword"
+    exit 1
+fi
+
+kasutajad_fail=$1
+paroolid_fail=$2
+
+
+if [ ! -r "$kasutajad_fail" ] || [ ! -r "$paroolid_fail" ]; then
+    echo "Probleem lugemisega failidega $kasutajad_fail ja/või $paroolid_fail"
+    exit 1
+fi
+
+# Lisame kasutajad süsteemi vastavate paroolidega
+paste -d: "$kasutajad_fail" "$paroolid_fail" | while IFS=: read -r kasutajanimi parool
+do
+    # Kontrollime, kas kasutaja juba eksisteerib
+    if grep -q "^$kasutajanimi:" /etc/passwd; then
+       echo "Kasutaja '$kasutajanimi' on juba olemas."
+    else
+        # Lisame uue kasutaja ilma paroolita
+        useradd -m -s /bin/bash "$kasutajanimi"
+        if [ $? -eq 0 ]; then
+            echo "Kasutaja '$kasutajanimi' on lisatud süsteemi."
+        else
+            echo "Viga kasutaja '$kasutajanimi' lisamisel süsteemi."
+            continue
+        fi
+    fi
+    
+    # Muudame kasutaja parooli
+    echo "$kasutajanimi:$parool" | chpasswd
+    if [ $? -eq 0 ]; then
+        echo "Parool on pandud kasutajale '$kasutajanimi'."
+    else
+        echo "Viga parooli seatud kasutajale '$kasutajanimi'."
+    fi
+done
+
