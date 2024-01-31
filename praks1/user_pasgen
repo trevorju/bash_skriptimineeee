@@ -2,7 +2,10 @@
 #
 # Parooli genereerimise skript kasutaj jaoks
 
-if [$# -ne 1 ]; then
+executer=$(whoami)
+if [ $executer = "root" ]; then
+
+if [ $# -ne 1 ]; then
     echo "Kasutusjuhend: $0 kasutajad"
 else
     kasutajad=$1
@@ -19,4 +22,8 @@ else
      else
        echo "problem"
      fi
+else
+	echo "Keelatud"
+
+
 fi
