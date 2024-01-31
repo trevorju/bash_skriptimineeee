@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+#Kasutaja lisamise script
+# kasutajal on kodukataloog ja ei ole parooli
+# 
+
+
+if [ $# -ne 1 ]; then
+    echo "Kasutusjuhend: $0 kasutajanimi"	
+else
+    user=$1 
+    useradd $user -m -s /bin/bash
+  kasu_tulemus=$?
+    if [ $kasu_tulemus -eq 0 ]; then
+    echo "Kasutaja $user on lisatud süsteemi"
+    cat /etc/passwd | grep $user
+    ls -la /home/$user
+  else
+    echo "probleem kasutaja $user lisamisega"
+    echo "probleemi kood on $kasu_tulemus"
+  fi
+fi
